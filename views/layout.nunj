@@ -1,0 +1,39 @@
+{% set static = "http://aurora.datasektionen.se" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>{{ title }} - Prometheus @ Datasektionen.se</title>
+    <link rel="stylesheet" href="{{ static }}/static/css/compiled.css" />
+    <script type="text/javascript">
+        window.tbaas_conf = {
+            system_name: "prometheus",
+            target_id: "methone-container-replace",
+            primary_color: "#8bc34a",
+            login_text: "{{ req.user.first_name }}",
+            login_href: "javascript:void(0);",
+            topbar_items: [
+                {
+                    str: "Redigera nyheter",
+                    href: "/prometheus/list/event"
+                },
+                {
+                    str: "Redigera event",
+                    href: "/prometheus/list/post"
+                },
+                {
+                    str: "Ny post",
+                    href: "/prometheus/create"
+                }
+            ]
+        }
+    </script>
+    <script async src="http://methone.datasektionen.se"></script>
+</head>
+<body>
+<div id="methone-container-replace"></div>
+<div id="application" class="light-green">
+    {% block body %}{% endblock %}
+</div>
+</body>
+</html>

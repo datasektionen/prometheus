@@ -1,0 +1,106 @@
+{% extends "views/layout.nunj" %}
+
+{% block js %}
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script>tinymce.init({ selector: '#content', min_height: 350 });</script>
+{% endblock %}
+
+{% block body %}
+
+    {% if create %}
+        <h1 class="light">Nytt innehåll</h1>
+    {% else %}
+        <h1 class="light">Redigera innehåll</h1>
+    {% endif %}
+
+    <hr />
+
+    {% if req.query.updated %}
+        <p class="bg-success pc-padding text-center">Innehållet uppdaterades.</p>
+    {% endif %}
+    {% if errors %}
+        <div class="bg-danger pc-padding">
+            <strong>Något blev fel vid redigeringen:</strong>
+            <ul>
+                {% for field, error in errors %}
+                    {% for err in error %}
+                        {% if err.message != "hidden" %}
+                            <li>{{ err.message }}</li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {% if error %}
+        <div class="bg-danger pc-padding">
+            <strong>Följande fel uppstod vid uppladdning av bildfilen:</strong>
+            <ul>
+                <li>{{ error.message }}</li>
+            </ul>
+        </div>
+    {% endif %}
+
+    <form action="/prometheus/edit/{{ item.id }}" method="POST" enctype="multipart/form-data">
+        {% if create %}
+            <input type="hidden" name="content_type" value="{{ req.params.type }}">
+        {% else %}
+            <input type="hidden" name="id" value="{{ item.id }}">
+            <input type="hidden" name="slug" value="{{ item.slug }}">
+            <input type="hidden" name="content_type" value="{{ item.content_type }}">
+        {% endif %}
+
+        {% if item.createdAt %}
+            <input type="hidden" name="createdAt" value="{{ item.createdAt }}">
+        {% endif %}
+
+        <div class="row form-horizontal form-group">
+            <label class="control-label col-xs-2" for="title">Titel</label>
+            <div class="col-xs-10">
+                <input
+                        class=""
+                        placeholder="Innehåll"
+                        id="title"
+                        name="title"
+                        value="{{ item.title }}"
+                        type="text">
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-xs-12">
+                <label class="control-label" for="content">Innehåll</label>
+                    <textarea
+                            class=""
+                            id="content"
+                            name="content"
+                            placeholder=""
+                    >{{ item.content }}</textarea>
+            </div>
+        </div>
+
+        {% if item.image %}
+            <div class="row form-group">
+                <div class="col-sm-6">
+                    <label class="control-label" for="image">Byt ut bilden:</label><br />
+                    <input type="file" name="image" id="image" class="" placeholder="Innehållsbild" />
+                </div>
+                <div class="col-sm-6">
+                    Nuvarande bild:<br />
+                    <div class="text-center">
+                        <img width="80%" src="/image/{{ item.image }}/hero" />
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <label class="control-label" for="avatar">Lägg till bild:</label><br />
+            <input type="file" name="avatar" id="avatar" class="" placeholder="Innehållsbild" />
+        {% endif %}
+
+        <hr />
+        <div class="text-center">
+            <input type="submit" value="Spara information" class="btn btn-lg btn-success">
+        </div>
+        <hr />
+    </form>
+
+{% endblock %}

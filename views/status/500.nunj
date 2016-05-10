@@ -1,0 +1,15 @@
+{% extends "views/layout.nunj" %}
+
+{% block body %}
+
+    <h2>
+        Internal Server Error
+    </h2>
+
+    {% if data %}
+        <pre>{{ data }}</pre>
+    {% else %}
+        <code>Ingen felinformation angiven.</code>
+    {% endif %}
+
+{% endblock %}

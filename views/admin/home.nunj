@@ -1,0 +1,7 @@
+{% extends "views/layout.nunj" %}
+
+{% block body %}
+
+    <h2>Administration</h2>
+
+{% endblock %}

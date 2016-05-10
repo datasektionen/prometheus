@@ -1,0 +1,17 @@
+{% extends "views/layout.nunj" %}
+{% set title = "404" %}
+
+{% block body %}
+
+    <h2>
+        Systemmeddelande
+    </h2>
+    <p>
+        {% if error %}
+            {{ error }}
+        {% else %}
+            Sidan du försökt nå existerar inte.
+        {% endif %}
+    </p>
+
+{% endblock %}
