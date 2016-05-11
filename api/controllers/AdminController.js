@@ -37,14 +37,18 @@ module.exports = {
 
     create: function (req, res) {
 
+        var type = req.params.type;
+        var title_en = (type === "event") ? "New event" : "New post";
+        var title_sv = (type === "event") ? "Nytt event" : "Ny post";
+
         var create = {
             content_type: req.params.type,
             author_kthid: req.user.user,
-            author_role: "",
-            title_en: "",
-            title_sv: "",
-            content_sv: "",
-            content_en: ""
+            author_role: "d-sys",
+            title_en: title_en,
+            title_sv: title_sv,
+            content_sv: "&nbsp;",
+            content_en: "&nbsp;"
         };
 
         Content
@@ -57,8 +61,14 @@ module.exports = {
 
         Content
             .findOne(req.params.id)
-            .exec((err, item) =>
-                typeof item === "undefined" ? res.notFound() : res.view('admin/edit', {item: item}));
+            .exec((err, item) => {
+                if (typeof item === "undefined") return res.notFound();
+
+                item.createdAt = moment(item.createdAt);
+                item.updatedAt = moment(item.updatedAt);
+                return res.view('admin/edit', { item: item })
+            }
+        );
     },
 
     doEdit: function (req, res) {
@@ -103,5 +113,9 @@ module.exports = {
         };
 
         ImageService.handleUpload(req, res, 'image', errCb, cb);
+    },
+
+    import: function (req, res) {
+        return res.ok("import");
     }
 };
