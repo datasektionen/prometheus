@@ -5,9 +5,6 @@
 
 var multer = require('multer');
 var Jimp = require('jimp');
-var Grid = require('gridfs-stream');
-var streamBuffers = require('stream-buffers');
-var mongoose = require('mongoose');
 
 //
 // IMAGE SERVICE PRIVATE FUNCTIONS
@@ -36,7 +33,7 @@ function processError(err, req, res, errCb) {
 }
 
 /**
- * Resize an image and save it to GridFS.
+ * Resize an image and save it to disk.
  * Image data should be provided in the req.file object by multer.
  *
  * @param {Express.req} req     Request object from controller
@@ -44,10 +41,9 @@ function processError(err, req, res, errCb) {
  * @param {function}    errCb   Function to run when an error is encountered
  * @param {number}      w       Image width
  * @param {number}      h       Image height
- * @param {Grid}        gfs     GridFS instance
  * @param {function}    cb      Callback when image processing and storage is done
  */
-function resizeAndSave(req, res, errCb, w, h, gfs, cb) {
+function resizeAndSave(req, res, errCb, w, h, cb) {
     // Guard against malformed data
     if (typeof req.file === "undefined")
         return cb(undefined, req.body);
@@ -57,37 +53,18 @@ function resizeAndSave(req, res, errCb, w, h, gfs, cb) {
         // Process read errors
         if (err) return processError(err, req, res, errCb);
 
+        // Construct file name
+        var fileName = req.user.user + Math.random() * 10000 + req.file.originalname;
+        var fileNameWithExt = fileName + "_" + w + "_" + h + ".jpg";
+
         // Resize and get JPEG
         image.cover(w, h)
             .quality(75)
-            .getBuffer(Jimp.MIME_JPEG, (err, buffer) => {
-                // Process errors
-                if (err) return processError(err, req, res, errCb);
-
-                // Make a Stream out of the Buffer
-                var buf = new streamBuffers.ReadableStreamBuffer();
-                buf.put(buffer);
-                buf.stop();
-
-                // Construct file name
-                var fileName = req.user.id + req.file.originalname;
-                var fileNameWithExt = fileName + "_" + w + "_" + h + ".jpg";
-
-                // Stream to GridFS
-                var ws = gfs.createWriteStream({
-                    content_type: Jimp.MIME_JPEG,
-                    mode: 'w',
-                    filename: fileNameWithExt,
-                    metadata: {
-                        uploadedBy: req.user.id,
-                        uploadedAt: Date.now()
-                    }
-                });
-                buf.pipe(ws);
-
-                // When file is successfully uploaded, run callback (or error callback)
-                ws.on('error', () => errCb(module.exports.ERR_GENERIC, req.body));
-                ws.on('finish', () => cb(fileName, req.body));
+            .write(sails.config.images.uploadDir + '/' + fileNameWithExt, function (err, yolo) {
+                if (err)
+                    errCb(module.exports.ERR_GENERIC, req.body);
+                else
+                    cb(fileName, req.body);
             });
     });
 }

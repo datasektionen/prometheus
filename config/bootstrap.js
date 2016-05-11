@@ -12,19 +12,10 @@
 /* jshint esnext: true */
 "use strict";
 
-var mongoose = require('mongoose');
-
 module.exports.bootstrap = function(cb) {
 
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
-    /**
-     * Open a Mongoose connection to MongoDB for GridFS usage
-     */
-    mongoose.connect(sails.config.connectionString);
-    var db = mongoose.connection;
-
-    db.on('error', console.error.bind(console, 'Mongoose connection error:'));
-    db.once('open', cb);
+    cb();
 };
