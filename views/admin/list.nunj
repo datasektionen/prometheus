@@ -41,7 +41,7 @@
             <tbody>
             {% for item in items %}
                 <tr>
-                    <td><a href="/admin/edit/{{ item.id }}">{{ item.title_sv }}</a></td>
+                    <td><a href="/prometheus/edit/{{ item.id }}">{{ item.title_sv }}</a></td>
                     <td>{{ item.createdAt }}</td>
                     <td>{{ item.updatedAt }}</td>
                 </tr>

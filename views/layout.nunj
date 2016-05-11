@@ -1,10 +1,10 @@
-{% set static = "http://aurora.datasektionen.se" %}
+{% set static = "http://localhost:8000" %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <title>{{ title }} - Prometheus @ Datasektionen.se</title>
-    <link rel="stylesheet" href="{{ static }}/static/css/compiled.css" />
+    <link rel="stylesheet" href="{{ static }}/styles/importer.css" />
     <script type="text/javascript">
         window.tbaas_conf = {
             system_name: "prometheus",
@@ -23,17 +23,18 @@
                 },
                 {
                     str: "Ny post",
-                    href: "/prometheus/create"
+                    href: "/prometheus/create/post"
                 }
             ]
         }
     </script>
-    <script async src="http://methone.datasektionen.se"></script>
 </head>
 <body>
 <div id="methone-container-replace"></div>
 <div id="application" class="light-green">
     {% block body %}{% endblock %}
 </div>
+<script src="http://methone.datasektionen.se"></script>
+{% block js %}{% endblock %}
 </body>
 </html>
