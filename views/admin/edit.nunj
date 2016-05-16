@@ -10,8 +10,30 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <script src="//cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script type="text/javascript">
-        new SimpleMDE({ element: document.getElementById("content_en") });
-        new SimpleMDE({ element: document.getElementById("content_sv") });
+        new SimpleMDE({
+            element: document.getElementById("content_en"),
+            autosave: {
+                uniqueId: "{{ item.id }}_en"
+            },
+            forceSync: true,
+            hideIcons: ['image', 'side-by-side', 'fullscreen', 'guide'],
+            parsingConfig: {
+                allowAtxHeaderWithoutSpace: true
+            },
+            spellChecker: false
+        });
+        new SimpleMDE({
+            element: document.getElementById("content_sv"),
+            autosave: {
+                uniqueId: "{{ item.id }}_sv"
+            },
+            forceSync: true,
+            hideIcons: ['image', 'side-by-side', 'fullscreen', 'guide'],
+            parsingConfig: {
+                allowAtxHeaderWithoutSpace: true
+            },
+            spellChecker: false
+        });
     </script>
 {% endblock %}
 
@@ -29,7 +51,7 @@
                         <h2>{{ title }}</h2>
                     </div>
                     <div class="header-right col-md-3">
-                        <span class="visible-lg-inline">Sparad {{ item.updatedAt.format('HH:MM') }}</span>
+                        <span class="visible-lg-inline">Sparad {{ item.updatedAt.format('HH:mm') }}</span>
                         {% if item.content_published %}
                             <input class="primary-action" type="submit" name="submit" value="Uppdatera" />
                         {% else %}
@@ -111,6 +133,29 @@
             </div>
             <div class="clear"></div>
         </div>
+
+        <div class="footer-toolbar hidden-xs hidden-sm">
+            <div class="footer-toolbar-inner row">
+                <div class="footer-toolbar-info col-md-8">
+                    {% if not item.content_published %}
+                        <strong>Kom ihåg att spara posten som utkast medan du jobbar.</strong>
+                        Senaste utkast sparat {{ item.updatedAt.format('HH:mm') }} ({{ item.now.diff(item.updatedAt, 'minutes') }} min sedan)
+                    {% else %}
+                        <strong>Publicerat innehåll uppdateras på siten direkt när du trycker på spara.</strong>
+                        Senaste version sparad {{ item.updatedAt.format('HH:mm') }} ({{ item.now.diff(item.updatedAt, 'minutes') }} min sedan)
+                    {% endif %}
+                </div>
+                <div class="footer-toolbar-action-buttons col-md-4 text-right">
+                    {% if item.content_published %}
+                        <input class="button primary-action" type="submit" name="submit" value="Uppdatera" />
+                    {% else %}
+                        <input class="button secondary-action" type="submit" name="submit" value="Spara utkast" />
+                        <input class="button primary-action" type="submit" name="publish" value="Publicera" />
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </form>
+
 
 {% endblock %}

@@ -64,6 +64,7 @@ module.exports = {
             .exec((err, item) => {
                 if (typeof item === "undefined") return res.notFound();
 
+                item.now = moment();
                 item.createdAt = moment(item.createdAt);
                 item.updatedAt = moment(item.updatedAt);
                 return res.view('admin/edit', { item: item })
