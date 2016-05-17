@@ -212,7 +212,23 @@
                             </div>
 
                             <div id="event_data" style="{% if item.content_type != "event" %}display:none;{% endif %}">
-                                eventdata
+                                <h3>Event</h3>
+                                <div class="form-group">
+                                    <div class="form-label-block">Eventdatum:</div>
+                                    <div class="input-group">
+                                        <label for="eventStart">Start:</label>
+                                        <input type="datetime" name="eventStart" id="eventStart" />
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="eventEnd">Slut:</label>
+                                        <input type="datetime" name="eventEnd" id="eventEnd" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="eventLocation" class="form-label-block">Eventplats:</label>
+                                    <input type="text" name="eventLocation" id="eventLocation" />
+                                </div>
                             </div>
                         </div>
                         <div class="clear"></div>
@@ -225,7 +241,8 @@
         <div class="footer-toolbar hidden-xs hidden-sm">
             <div class="footer-toolbar-inner row">
                 <div class="footer-toolbar-info col-md-8">
-                    {% if not item.publishDate %}
+                    {{ item.publishDate }}
+                    {% if item.publishDate == "" %}
                         <strong>Kom ihåg att spara posten som utkast medan du jobbar.</strong>
                         Senaste utkast sparat {{ item.updatedAt.format('HH:mm') }} ({{ item.now.diff(item.updatedAt, 'minutes') }} min sedan)
                     {% else %}
