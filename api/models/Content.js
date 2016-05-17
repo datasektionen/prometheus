@@ -15,12 +15,6 @@ module.exports = {
             enum: ['post', 'event'],
             required: true
         },
-        content_published: {
-            type: 'boolean',
-            required: true,
-            defaultsTo: false
-        },
-
         title_sv: {
             type: 'string',
             required: true
@@ -31,28 +25,24 @@ module.exports = {
         },
 
         content_sv: {
-            type: 'text',
-            required: true
-        },
-        content_en: {
-            type: 'text',
-            required: true
-        },
-        content_sticky: 'boolean',
-        content_tags: 'array',
-
-        // METADATA
-        // Author KTH ID (e.g. johan for johan@kth.se)
-        // Author role (e.g. d-sys for Systemansvarig)
-        author_kthid: {
             type: 'string',
             required: true
         },
-        author_role: {
+        content_en: {
             type: 'string',
             required: true
         },
         publishDate: 'datetime',
+        sticky: 'boolean',
+        tags: 'array',
+        image: 'string',
+
+        // METADATA
+        // Author can be KTH ID (e.g. johan for johan@kth.se) or functionary role (e.g. d-sys for Systemansvarig)
+        author: {
+            type: 'string',
+            required: true
+        },
 
         // EVENT PROPERTIES
         eventStart: 'datetime',
@@ -71,5 +61,10 @@ module.exports = {
 
     },
 
-    validationMessages: {}
+    validationMessages: {
+        title_sv: { required: "Du måste fylla i titel (svenska)" },
+        title_en: { required: "Du måste fylla i titel (engelska)" },
+        content_sv: { required: "Du måste fylla i innehåll (svenska)" },
+        content_en: { required: "Du måste fylla i innehåll (engelska)" }
+    }
 };

@@ -74,46 +74,61 @@ module.exports = {
 
     doEdit: function (req, res) {
 
-        // Second action performed once database is updated
-        var action = function (err, content) {
-
-            if (err)
-                // Validation errors
-                if (typeof err.Errors !== "undefined")
-                    return res.view('admin/edit', { item: req.body, errors: err.Errors});
-
-                // Actual server error
-                else return res.serverError(err);
-
-            // Successful update
-            else
-                if (typeof content.id !== "undefined")
-                    return res.redirect('/prometheus/edit/' + content.id + '?saved=true');
-                else
-                    return res.redirect('/prometheus/edit/' + content[0].id + '?updated=true');
-        };
-
-        // Call ImageService and upload and resize image, then run Content save action
-        var errCb = (error, fields) => res.view('admin/edit', { item: fields, error: error });
+        // Successful upload
         var cb = function (fileName, fields) {
+            sails.log.debug(fields);
+
             // Metadata variables
             var id = fields.id;
 
             if (typeof fileName !== "undefined")
                 fields.image = fileName;
 
+            // If publish now is selected and
+            if (typeof fields.publish_now !== "undefined") {
+                if (fields.publish_now === "true" && typeof fields.publish !== "undefined")
+                    fields.publishDate = Date.now();
+            }
+
             // Remove fields that shouldn't be updated from fields object
             delete fields.id;
-            delete fields.createdAt;
 
-            // If no id is provided, create a new content item
-            if (typeof id === "undefined")
-                Content.create(fields).exec(action);
-            else
-                Content.update(id, fields).exec(action);
+            // Run database update
+            Content.update(id, fields).exec(function (err, content) {
+
+                if (err)
+                // Validation errors
+                    if (typeof err.Errors !== "undefined") {
+                        var item = req.body;
+                        item.now = moment();
+                        item.createdAt = moment(item.createdAt);
+                        item.updatedAt = moment(item.updatedAt);
+                        return res.view('admin/edit', { item: item, errors: err.Errors});
+                    }
+
+                    // Actual server error
+                    else return res.serverError(err);
+
+                // Successful update
+                else
+                    if (typeof content.id !== "undefined")
+                        return res.redirect('/prometheus/edit/' + content.id + '?saved=true');
+                    else
+                        return res.redirect('/prometheus/edit/' + content[0].id + '?updated=true');
+            });
         };
 
-        ImageService.handleUpload(req, res, 'image', errCb, cb);
+        // Upload failures
+        var errCb = function (error, fields) {
+            var item = fields;
+            item.now = moment();
+            item.createdAt = moment(item.createdAt);
+            item.updatedAt = moment(item.updatedAt);
+            return res.view('admin/edit', { item: item, error: error });
+        };
+
+        // Call ImageService and upload and resize image, then run Content save action
+        ImageService.handleUpload(req, res, 'avatar', errCb, cb);
     },
 
     import: function (req, res) {

@@ -25,7 +25,7 @@ module.exports = {
      */
     login: function (req, res) {
         passport.authenticate('dauth', {
-            successRedirect: '/prometheus/',
+            successRedirect: '/prometheus/list/post',
             failureRedirect: '/fail'
         })(req, res);
     },
