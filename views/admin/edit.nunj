@@ -34,6 +34,14 @@
             },
             spellChecker: false
         });
+        function queue() {
+            document.getElementById("publish_post").style = 'display:none';
+            document.getElementById("queue_post").style = 'display:block';
+        }
+        function unqueue() {
+            document.getElementById("publish_post").style = 'display:block';
+            document.getElementById("queue_post").style = 'display:none';
+        }
     </script>
 {% endblock %}
 
@@ -149,13 +157,14 @@
                                 <div class="form-label-block">Publiceringsdatum:</div>
                                 {% if not item.publishDate %}
                                     <div class="form-group">
-                                        <input type="radio" name="publish_now" id="publish_now" value="true" checked />
+                                        <input type="radio" name="publish_now" id="publish_now" onclick="unqueue();" value="true" checked />
                                         <label for="publish_now">Direkt: <span>{{ item.now.format('D MMMM YYYY HH:mm') }}</span></label>
                                     </div>
                                     <div class="form-group">
-                                        <input type="radio" name="publish_now" id="publish_now" value="false" />
+                                        <input type="radio" name="publish_now" id="publish_later" value="false"
+                                               onclick="queue(); document.getElementById('publishDate').focus();" title="Publicera senare" />
                                         <label for="publishDate">Senare:</label>
-                                        <input type="datetime" id="publishDate" />
+                                        <input type="datetime" name="publishDate" onfocus="queue(); document.getElementById('publish_later').checked = true;" id="publishDate" />
                                     </div>
                                 {% else %}
                                     {% if item.now.unix() >= item.publishDate.unix() %}
@@ -250,12 +259,21 @@
                     {% endif %}
                 </div>
                 <div class="footer-toolbar-action-buttons col-md-4 text-right">
-                    {% if item.publishDate %}
-                        <input class="button primary-action" type="submit" name="submit" value="Uppdatera" />
-                    {% else %}
-                        <input class="button secondary-action" type="submit" name="submit" value="Spara utkast" />
-                        <input class="button primary-action" type="submit" name="publish" value="Publicera" />
-                    {% endif %}
+                    <div id="publish_post">
+                        {% if item.publishDate %}
+                            {% if item.now.unix() >= item.publishDate.unix() %}
+                                <input class="button primary-action" type="submit" name="submit" value="Uppdatera" />
+                            {% else %}
+                                <input class="button primary-action" type="submit" name="submit" value="Köa publicering" />
+                            {% endif %}
+                        {% else %}
+                            <input class="button secondary-action" type="submit" name="submit" value="Spara utkast" />
+                            <input class="button primary-action" type="submit" name="publish" value="Publicera" />
+                        {% endif %}
+                    </div>
+                    <div id="queue_post" style="display: none;">
+                        <input class="button primary-action" type="submit" name="submit" value="Köa publicering" />
+                    </div>
                 </div>
             </div>
         </div>
