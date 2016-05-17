@@ -65,6 +65,8 @@ module.exports = {
         title_sv: { required: "Du måste fylla i titel (svenska)" },
         title_en: { required: "Du måste fylla i titel (engelska)" },
         content_sv: { required: "Du måste fylla i innehåll (svenska)" },
-        content_en: { required: "Du måste fylla i innehåll (engelska)" }
+        content_en: { required: "Du måste fylla i innehåll (engelska)" },
+        facebookEvent: { url: "Facebook-event måste vara en URL" },
+        googleForm: { url: "Google Doc/Form måste vara en URL" }
     }
 };

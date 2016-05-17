@@ -1,5 +1,5 @@
 /**
- * CoachController
+ * AdminController
  *
  * @description :: Server-side logic for managing news and event items
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
@@ -9,6 +9,7 @@
 "use strict";
 
 var moment = require('moment');
+moment.locale('sv');
 
 module.exports = {
 
@@ -38,17 +39,14 @@ module.exports = {
     create: function (req, res) {
 
         var type = req.params.type;
-        var title_en = (type === "event") ? "New event" : "New post";
-        var title_sv = (type === "event") ? "Nytt event" : "Ny post";
 
         var create = {
             content_type: req.params.type,
-            author_kthid: req.user.user,
-            author_role: "d-sys",
-            title_en: title_en,
-            title_sv: title_sv,
-            content_sv: "&nbsp;",
-            content_en: "&nbsp;"
+            author: req.user.user,
+            title_sv: "Nytt innehåll",
+            title_en: "New content",
+            content_sv: "...",
+            content_en: "..."
         };
 
         Content
@@ -67,6 +65,7 @@ module.exports = {
                 item.now = moment();
                 item.createdAt = moment(item.createdAt);
                 item.updatedAt = moment(item.updatedAt);
+                item.publishDate = moment(item.publishDate);
                 return res.view('admin/edit', { item: item })
             }
         );
@@ -87,11 +86,14 @@ module.exports = {
             // If publish now is selected and
             if (typeof fields.publish_now !== "undefined") {
                 if (fields.publish_now === "true" && typeof fields.publish !== "undefined")
-                    fields.publishDate = Date.now();
+                    fields.publishDate = moment().format();
             }
 
             // Remove fields that shouldn't be updated from fields object
             delete fields.id;
+            delete fields.submit;
+            delete fields.publish;
+            delete fields.publish_now;
 
             // Run database update
             Content.update(id, fields).exec(function (err, content) {
@@ -103,6 +105,7 @@ module.exports = {
                         item.now = moment();
                         item.createdAt = moment(item.createdAt);
                         item.updatedAt = moment(item.updatedAt);
+                        item.publishDate = moment(item.publishDate);
                         return res.view('admin/edit', { item: item, errors: err.Errors});
                     }
 
@@ -124,6 +127,7 @@ module.exports = {
             item.now = moment();
             item.createdAt = moment(item.createdAt);
             item.updatedAt = moment(item.updatedAt);
+            item.publishDate = moment(item.publishDate);
             return res.view('admin/edit', { item: item, error: error });
         };
 

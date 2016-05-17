@@ -64,7 +64,7 @@ function resizeAndSave(req, res, errCb, w, h, cb) {
                 if (err)
                     errCb(err, req.body);
                 else
-                    cb(fileNameWithExt, req.body);
+                    cb(fileName, req.body);
             });
     });
 }

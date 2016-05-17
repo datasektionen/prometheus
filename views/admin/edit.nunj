@@ -46,14 +46,14 @@
             <div class="header-inner">
                 <div class="row">
                     <div class="header-left col-md-3">
-                        <a href="/prometheus/list/{{ item.type }}">&laquo; Tillbaka</a>
+                        <a href="/prometheus/list/{{ item.content_type }}">&laquo; Tillbaka</a>
                     </div>
                     <div class="col-md-6">
                         <h2>{{ title }}</h2>
                     </div>
                     <div class="header-right col-md-3">
                         <span class="visible-lg-inline">Sparad {{ item.updatedAt.format('HH:mm') }}</span>
-                        {% if item.content_published %}
+                        {% if item.publishDate %}
                             <input class="primary-action" type="submit" name="submit" value="Uppdatera" />
                         {% else %}
                             <input class="primary-action" type="submit" name="publish" value="Publicera" />
@@ -65,10 +65,10 @@
         </header>
         <div id="content">
             {% if req.query.updated %}
-                <p class="notice notice-success">Innehållet uppdaterades.</p>
+                <p class="notice notice-success bg-info text-center">Innehållet uppdaterades.</p>
             {% endif %}
             {% if errors %}
-                <div class="notice notice-danger">
+                <div class="notice notice-danger bg-danger">
                     <strong>Något blev fel vid redigeringen:</strong>
                     <ul>
                         {% for field, error in errors %}
@@ -82,7 +82,7 @@
                 </div>
             {% endif %}
             {% if error %}
-                <div class="bg-danger pc-padding">
+                <div class="bg-danger notice">
                     <strong>Följande fel uppstod vid uppladdning av bildfilen:</strong>
                     <ul>
                         <li>{{ error.message }}</li>
@@ -96,24 +96,40 @@
                         <input type="text" name="title_sv" class="ds-primary-input" value="{{ item.title_sv }}" title="Titel (svenska)"/>
                         <input type="text" name="title_en" class="ds-secondary-input" value="{{ item.title_en }}" title="Titel (engelska)" />
                     </div>
-                    <div class="col-sm-6">
-                        {% if item.image %}
-                            <div class="row form-group">
-                                <div class="col-sm-6">
-                                    <img width="100%" src="/uploads/{{ item.image }}_{{ sails.config.images.thumbnailSize }}_{{ sails.config.images.thumbnailSize }}.jpg" />
+                    <div class="clear"></div>
+                    <div class="ultra_light" style="padding-top: 15px;">
+                        <div class="col-sm-6">
+                            {% if item.image %}
+                                <div class="row form-group">
+                                    <div class="col-sm-4">
+                                        <img height="100" src="/uploads/{{ item.image }}_{{ sails.config.images.thumbnailSize }}_{{ sails.config.images.thumbnailSize }}.jpg" />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <label class="control-label" for="avatar">Byt ut bilden:</label><br />
+                                        <input type="file" name="avatar" id="avatar" class="" placeholder="Innehållsbild" />
+                                    </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <label class="control-label" for="avatar">Byt ut bilden:</label><br />
-                                    <input type="file" name="avatar" id="avatar" class="" placeholder="Innehållsbild" />
+                            {% else %}
+                                <label class="control-label" for="avatar">Lägg till bild:</label><br />
+                                <input type="file" name="avatar" id="avatar" class="" placeholder="Innehållsbild" />
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <strong>Externa länkar:</strong>
+                                <div class="input-group">
+                                    <div class="input-group-addon" id="fb"><i class="fa fa-fw"></i></div>
+                                    <input type="text" class="form-control" name="facebookEvent" title="Facebook-event (URL)"
+                                           placeholder="Facebook-event (URL)" value="{{ item.facebookEvent }}" />
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon" id="gdocs"><i class="fa fa-fw"></i></div>
+                                    <input type="text" class="form-control" name="googleForm" title="Google Doc/Form (URL)"
+                                           placeholder="Google Doc/Form (URL)" value="{{ item.googleForm }}" />
                                 </div>
                             </div>
-                        {% else %}
-                            <label class="control-label" for="avatar">Lägg till bild:</label><br />
-                            <input type="file" name="avatar" id="avatar" class="" placeholder="Innehållsbild" />
-                        {% endif %}
-                    </div>
-                    <div class="col-sm-6">
-                        social links
+                        </div>
+                        <div class="clear"></div>
                     </div>
 
                     <div class="clear"></div>
@@ -126,69 +142,80 @@
                     </div>
                 </div>
                 <div class="col-xs-3">
-                    <div class="sidebar">
+                    <div class="sidebar toolbox">
                         <h3>Metadata</h3>
-
-                        <div class="form-group">
-                            <div class="form-label-block">Publiceringsdatum:</div>
-                            {% if not item.content_published %}
-                                <div class="form-input-group">
-                                    <input type="radio" name="publish_now" id="publish_now" value="true" checked />
-                                    <label for="publish_now">Direkt: <span>{{ item.now.format() }}</span></label>
-                                </div>
-                                <div class="form-input-group">
-                                    <input type="radio" name="publish_now" id="publish_now" value="false" />
-                                    <label for="publishDate">Senare:</label>
-                                    <input type="datetime" id="publishDate" />
-                                </div>
-                            {% else %}
-                                {% if item.now.unix() > item.content_published.unix() %}
-                                    <div class="form-input-group">
-                                        <input type="radio" id="publish_now" checked />
-                                        <label for="publish_now">Publicerad: <span>{{ item.now.format() }}</span></label>
+                        <div class="col-xs-12">
+                            <div class="form-horizontal">
+                                <div class="form-label-block">Publiceringsdatum:</div>
+                                {% if not item.publishDate %}
+                                    <div class="form-group">
+                                        <input type="radio" name="publish_now" id="publish_now" value="true" checked />
+                                        <label for="publish_now">Direkt: <span>{{ item.now.format('D MMMM YYYY HH:mm') }}</span></label>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="radio" name="publish_now" id="publish_now" value="false" />
+                                        <label for="publishDate">Senare:</label>
+                                        <input type="datetime" id="publishDate" />
                                     </div>
                                 {% else %}
-                                    <div class="form-input-group">
-                                        <input type="radio" id="publish_now" checked />
-                                        <label for="publish_now">Köad: <span>{{ item.now.format() }}</span></label>
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                        <div class="form-divider"></div>
-                        <div class="form-group">
-                            <label for="author" class="form-label-block">Publicera i egenskap av:</label>
-                            <div class="form-input-group">
-                                <select id="author" class="form-select" name="author">
-                                    {% if item.author %}
-                                        <optgroup label="Nuvarande värde">
-                                            <option value="{{ item.author }}">{{ item.author }}</option>
-                                        </optgroup>
+                                    {% if item.now.unix() > item.publishDate.unix() %}
+                                        <div class="form-input-group">
+                                            <input type="radio" id="publish_now" checked />
+                                            <label for="publish_now">Publicerad: <span>{{ item.publishDate.format('D MMMM YYYY HH:mm') }}</span></label>
+                                        </div>
+                                    {% else %}
+                                        <div class="form-input-group">
+                                            <input type="radio" id="publish_now" checked />
+                                            <label for="publish_now">Köad: <span>{{ item.publishDate.format('D MMMM YYYY HH:mm') }}</span></label>
+                                        </div>
                                     {% endif %}
-                                    <optgroup label="Möjliga värden">
-                                        <option value="{{ req.user.user }}">{{ req.user.first_name }} {{ req.user.last_name }}</option>
-                                        <option value="d-sys">Systemansvarig</option>
-                                    </optgroup>
-                                </select>
+                                {% endif %}
+                            </div>
+                            <div class="form-divider"></div>
+                            <div class="form-group">
+                                <label for="author" class="form-label-block">Publicera i egenskap av:</label>
+                                <div class="form-input-group">
+                                    <select id="author" class="form-select form-control" name="author">
+                                        {% if item.author %}
+                                            <optgroup label="Nuvarande värde">
+                                                <option value="{{ item.author }}">{{ item.author }}</option>
+                                            </optgroup>
+                                        {% endif %}
+                                        <optgroup label="Möjliga värden">
+                                            <option value="{{ req.user.user }}">{{ req.user.first_name }} {{ req.user.last_name }}</option>
+                                            <option value="d-sys">Systemansvarig</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-divider"></div>
+                            <div class="form-group">
+                                <div class="form-label-inline">Synlighet:</div>
+                                <input type="checkbox" name="sticky" value="true" {% if item.sticky %} checked{% endif %} id="sticky" />
+                                <label for="sticky" class="form-label-narrow">Viktig post</label>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="content_type" class="form-label-block">Posttyp:</label>
+                                <div class="form-input-group">
+                                    <select id="content_type" class="form-control" name="content_type">
+                                        <optgroup label="Nuvarande val">
+                                            <option value="{{ item.content_type }}">{{ item.content_type | capitalize }}</option>
+                                        </optgroup>
+                                        <optgroup label="Möjliga val">
+                                            <option value="post">Post</option>
+                                            <option value="event">Event</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="event_data" style="{% if item.content_type != "event" %}display:none;{% endif %}">
+                                eventdata
                             </div>
                         </div>
-
-                        <div class="form-divider"></div>
-                        <div class="form-group">
-                            <div class="form-label-inline">Synlighet:</div>
-                            <input type="checkbox" name="sticky" value="true" {% if item.sticky %} checked{% endif %} id="sticky" />
-                            <label for="sticky" class="form-label-narrow">Viktig post</label>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="content_type" class="form-label-block">Posttyp:</label>
-                            <div class="form-input-group">
-                                <select id="content_type" class="form-select" name="content_type">
-                                    <option value="post" selected>Post</option>
-                                    <option value="event">Event</option>
-                                </select>
-                            </div>
-                        </div>
+                        <div class="clear"></div>
                     </div>
                 </div>
             </div>
@@ -198,7 +225,7 @@
         <div class="footer-toolbar hidden-xs hidden-sm">
             <div class="footer-toolbar-inner row">
                 <div class="footer-toolbar-info col-md-8">
-                    {% if not item.content_published %}
+                    {% if not item.publishDate %}
                         <strong>Kom ihåg att spara posten som utkast medan du jobbar.</strong>
                         Senaste utkast sparat {{ item.updatedAt.format('HH:mm') }} ({{ item.now.diff(item.updatedAt, 'minutes') }} min sedan)
                     {% else %}
@@ -207,7 +234,7 @@
                     {% endif %}
                 </div>
                 <div class="footer-toolbar-action-buttons col-md-4 text-right">
-                    {% if item.content_published %}
+                    {% if item.publishDate %}
                         <input class="button primary-action" type="submit" name="submit" value="Uppdatera" />
                     {% else %}
                         <input class="button secondary-action" type="submit" name="submit" value="Spara utkast" />

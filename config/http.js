@@ -11,6 +11,7 @@
 "use strict";
 
 var moment = require('moment');
+var connect = require('connect');
 
 module.exports.http = {
 
@@ -40,6 +41,8 @@ module.exports.http = {
             return next();
         },
 
+        mounted: connect.static('mounted'),
+
         order: [
             'startRequestTimer',
             'cookieParser',
@@ -51,10 +54,9 @@ module.exports.http = {
             'handleBodyParserError',
             'compress',
             'methodOverride',
-            'poweredBy',
             'router',
             'www',
-            'favicon',
+            'mounted',
             '404',
             '500'
         ]
