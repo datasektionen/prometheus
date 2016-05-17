@@ -158,7 +158,7 @@
                                         <input type="datetime" id="publishDate" />
                                     </div>
                                 {% else %}
-                                    {% if item.now.unix() > item.publishDate.unix() %}
+                                    {% if item.now.unix() >= item.publishDate.unix() %}
                                         <div class="form-input-group">
                                             <input type="radio" id="publish_now" checked />
                                             <label for="publish_now">Publicerad: <span>{{ item.publishDate.format('D MMMM YYYY HH:mm') }}</span></label>
@@ -241,7 +241,6 @@
         <div class="footer-toolbar hidden-xs hidden-sm">
             <div class="footer-toolbar-inner row">
                 <div class="footer-toolbar-info col-md-8">
-                    {{ item.publishDate }}
                     {% if item.publishDate == "" %}
                         <strong>Kom ihåg att spara posten som utkast medan du jobbar.</strong>
                         Senaste utkast sparat {{ item.updatedAt.format('HH:mm') }} ({{ item.now.diff(item.updatedAt, 'minutes') }} min sedan)
