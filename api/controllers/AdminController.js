@@ -65,7 +65,9 @@ module.exports = {
                 item.now = moment();
                 item.createdAt = moment(item.createdAt);
                 item.updatedAt = moment(item.updatedAt);
-                item.publishDate = moment(item.publishDate);
+                if (item.publishDate)
+                    item.publishDate = moment(item.publishDate);
+                
                 return res.view('admin/edit', { item: item })
             }
         );
@@ -105,7 +107,9 @@ module.exports = {
                         item.now = moment();
                         item.createdAt = moment(item.createdAt);
                         item.updatedAt = moment(item.updatedAt);
-                        item.publishDate = moment(item.publishDate);
+                        if (item.publishDate)
+                            item.publishDate = moment(item.publishDate);
+
                         return res.view('admin/edit', { item: item, errors: err.Errors});
                     }
 
@@ -127,7 +131,9 @@ module.exports = {
             item.now = moment();
             item.createdAt = moment(item.createdAt);
             item.updatedAt = moment(item.updatedAt);
-            item.publishDate = moment(item.publishDate);
+            if (item.publishDate)
+                item.publishDate = moment(item.publishDate);
+
             return res.view('admin/edit', { item: item, error: error });
         };
 
