@@ -22,6 +22,12 @@ module.exports = {
     list: function (req, res) {
         var language = req.params.language;
         var type = req.params.type;
+        var filters = {
+            publishDate: { '<': new Date() }
+        };
+
+        if (type !== "all")
+            filters.content_type = type;
 
         var fields = ['id', 'content_type', 'author', 'image', 'sticky', 'publishDate', 'facebookEvent',
             'googleForm', 'eventStart', 'eventEnd', 'eventLocation'];
@@ -30,9 +36,7 @@ module.exports = {
 
         Content
             .find({
-                where: {
-                    publishDate: { '<': new Date() }
-                },
+                where: filters,
                 orderBy: 'publishDate DESC'
             })
             .exec(function (err, content) {
