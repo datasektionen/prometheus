@@ -10,7 +10,7 @@
  *
  */
 
-const connectionString = process.env.MONGODB_CONNECTIONSTRING || "mongodb://localhost/Prometheus";
+const connectionString = process.env.MONGO_URL || "mongodb://localhost/Prometheus";
 
 module.exports = {
     
