@@ -4,22 +4,25 @@
 <head>
     <meta charset="utf-8" />
     <title>{{ title }} - Prometheus @ Datasektionen.se</title>
-    <link rel="stylesheet" href="{{ static }}/styles/importer.css" />
+    <link rel="stylesheet" href="{{ static }}" />
+    <link rel="stylesheet" href="/styles/importer.css" />
     <script type="text/javascript">
         window.tbaas_conf = {
             system_name: "prometheus",
             target_id: "methone-container-replace",
             primary_color: "#8bc34a",
+            secondary_color: "white",
+            delta_invert: true,
             login_text: "{{ req.user.first_name }}",
             login_href: "javascript:void(0);",
             topbar_items: [
                 {
                     str: "Redigera nyheter",
-                    href: "/prometheus/list/event"
+                    href: "/prometheus/list/post"
                 },
                 {
                     str: "Redigera event",
-                    href: "/prometheus/list/post"
+                    href: "/prometheus/list/event"
                 },
                 {
                     str: "Ny post",
