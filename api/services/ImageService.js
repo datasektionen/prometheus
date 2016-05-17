@@ -54,17 +54,17 @@ function resizeAndSave(req, res, errCb, w, h, cb) {
         if (err) return processError(err, req, res, errCb);
 
         // Construct file name
-        var fileName = req.user.user + Math.random() * 10000 + req.file.originalname;
+        var fileName = req.user.user + req.file.originalname;
         var fileNameWithExt = fileName + "_" + w + "_" + h + ".jpg";
 
         // Resize and get JPEG
         image.cover(w, h)
             .quality(75)
-            .write(sails.config.images.uploadDir + '/' + fileNameWithExt, function (err, yolo) {
+            .write(sails.config.images.uploadDir + '/' + fileNameWithExt, function (err) {
                 if (err)
-                    errCb(module.exports.ERR_GENERIC, req.body);
+                    errCb(err, req.body);
                 else
-                    cb(fileName, req.body);
+                    cb(fileNameWithExt, req.body);
             });
     });
 }
@@ -90,17 +90,16 @@ module.exports = {
      */
     handleUpload: function (req, res, fieldName, errCb, cb) {
         var upload = multer({ limits: { fileSize: 512000 } }).single(fieldName);
-        var gfs = Grid(mongoose.connection.db, mongoose.mongo);
 
         upload(req, res, function (err) {
             if (err) return processError(err, req, res, errCb);
 
             resizeAndSave(req, res, errCb,
-                sails.config.images.heroWidth, sails.config.images.heroHeight, gfs,
+                sails.config.images.heroWidth, sails.config.images.heroHeight,
                 function (fileName) {
                     console.log("Saved " + fileName);
                     resizeAndSave(req, res, errCb,
-                        sails.config.images.thumbnailSize, sails.config.images.thumbnailSize, gfs, cb);
+                        sails.config.images.thumbnailSize, sails.config.images.thumbnailSize, cb);
             });
         });
 
