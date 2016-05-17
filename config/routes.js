@@ -42,5 +42,6 @@ module.exports.routes = {
     '/prometheus/create/:type': 'AdminController.create',
 
     '/api/list/:language/:type': 'ApiController.list',
-    '/api/item/:id': 'ApiController.item'
+    '/api/item/:id': 'ApiController.item',
+    '/api/sticky': 'ApiController.sticky'
 };

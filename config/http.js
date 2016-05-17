@@ -38,6 +38,8 @@ module.exports.http = {
 
         requestLogger: function (req, res, next) {
             console.log(moment().format('HH:mm:ss'), req.method, res.statusCode, req.url);
+            res.set('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Origin', '*');
             return next();
         },
 

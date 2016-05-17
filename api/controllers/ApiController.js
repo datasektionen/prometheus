@@ -37,7 +37,7 @@ module.exports = {
         Content
             .find({
                 where: filters,
-                orderBy: 'publishDate DESC'
+                sort: 'publishDate DESC'
             })
             .exec(function (err, content) {
                 return res.jsonx(content.map(function (item) {
@@ -68,6 +68,12 @@ module.exports = {
 
             return res.jsonx(i);
         });
+    },
+
+    sticky: function (req, res) {
+        Content
+            .find({where: { sticky: true }, limit: 1, sort: 'publishDate DESC'})
+            .exec((err, item) => err ? res.serverError(err) : res.send(item));
     }
     
 };
