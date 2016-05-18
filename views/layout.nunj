@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>{{ title }} - Prometheus @ Datasektionen.se</title>
-    <link rel="stylesheet" href="http://aurora.datasektionen.se" />
+    <link rel="stylesheet" href="//aurora.datasektionen.se" />
     <link rel="stylesheet" href="/styles/importer.css" />
     <script type="text/javascript">
         window.tbaas_conf = {
@@ -36,7 +36,7 @@
 <div id="application" class="light-green">
     {% block body %}{% endblock %}
 </div>
-<script src="http://methone.datasektionen.se"></script>
+<script src="//methone.datasektionen.se"></script>
 {% block js %}{% endblock %}
 </body>
 </html>

@@ -226,17 +226,17 @@
                                     <div class="form-label-block">Eventdatum:</div>
                                     <div class="input-group">
                                         <label for="eventStart">Start:</label>
-                                        <input type="datetime" name="eventStart" id="eventStart" />
+                                        <input type="datetime" name="eventStart" id="eventStart" value="{{ item.eventStart }}" />
                                     </div>
                                     <div class="input-group">
                                         <label for="eventEnd">Slut:</label>
-                                        <input type="datetime" name="eventEnd" id="eventEnd" />
+                                        <input type="datetime" name="eventEnd" id="eventEnd" value="{{ item.eventEnd }}" />
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="eventLocation" class="form-label-block">Eventplats:</label>
-                                    <input type="text" name="eventLocation" id="eventLocation" />
+                                    <input type="text" name="eventLocation" id="eventLocation" value="{{ item.eventLocation }}" />
                                 </div>
                             </div>
                         </div>
