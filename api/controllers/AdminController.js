@@ -37,22 +37,7 @@ module.exports = {
     },
 
     create: function (req, res) {
-
-        var type = req.params.type;
-
-        var create = {
-            content_type: req.params.type,
-            author: req.user.user,
-            title_sv: "Nytt innehåll",
-            title_en: "New content",
-            content_sv: "...",
-            content_en: "..."
-        };
-
-        Content
-            .create(create)
-            .exec((err, item) =>
-                err ? res.serverError(err) : res.redirect('/prometheus/edit/' + item.id));
+        return res.view('admin/edit', { create: true, item: { now: moment(), content_type: req.params.type } });
     },
 
     edit: function (req, res) {
@@ -74,6 +59,44 @@ module.exports = {
     },
 
     doEdit: function (req, res) {
+
+        // Second action performed once database is updated
+        var action = function (err, content) {
+
+            if (err)
+            // Validation errors
+                if (typeof err.Errors !== "undefined") {
+                    var item = req.body, create = false;
+
+                    item.now = moment();
+                    item.createdAt = moment(item.createdAt);
+                    item.updatedAt = moment(item.updatedAt);
+                    if (item.publishDate)
+                        item.publishDate = moment(item.publishDate);
+
+                    // Continue in Create mode when errors are encountered
+                    if (typeof item.id === "undefined") {
+                        create = true;
+                        delete item.publishDate;
+                    }
+
+                    return res.view('admin/edit', { item: item, errors: err.Errors, create: create });
+                }
+
+                // Actual server error
+                else return res.serverError(err);
+
+            // Successful update
+            else {
+                sails.log.debug(content);
+                sails.log.debug(err);
+
+                if (typeof content.id !== "undefined")
+                    return res.redirect('/prometheus/edit/' + content.id + '?saved=true');
+                else
+                    return res.redirect('/prometheus/edit/' + content[0].id + '?updated=true');
+            }
+        };
 
         // Successful upload
         var cb = function (fileName, fields) {
@@ -97,32 +120,14 @@ module.exports = {
             delete fields.publish;
             delete fields.publish_now;
 
-            // Run database update
-            Content.update(id, fields).exec(function (err, content) {
-
-                if (err)
-                // Validation errors
-                    if (typeof err.Errors !== "undefined") {
-                        var item = req.body;
-                        item.now = moment();
-                        item.createdAt = moment(item.createdAt);
-                        item.updatedAt = moment(item.updatedAt);
-                        if (item.publishDate)
-                            item.publishDate = moment(item.publishDate);
-
-                        return res.view('admin/edit', { item: item, errors: err.Errors});
-                    }
-
-                    // Actual server error
-                    else return res.serverError(err);
-
-                // Successful update
-                else
-                    if (typeof content.id !== "undefined")
-                        return res.redirect('/prometheus/edit/' + content.id + '?saved=true');
-                    else
-                        return res.redirect('/prometheus/edit/' + content[0].id + '?updated=true');
-            });
+            // If no id is provided, create a new content item
+            if (typeof id === "undefined")
+            {
+                sails.log.debug("ID is undefined, creating new content");
+                Content.create(fields).exec(action);
+            }
+            else
+                Content.update(id, fields).exec(action);
         };
 
         // Upload failures

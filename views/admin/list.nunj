@@ -30,7 +30,7 @@
         </div>
     </header>
     <div id="content">
-        <table width="100%">
+        <table width="100%" class="table table-striped">
             <thead>
             <tr>
                 <th width="30%">Titel</th>

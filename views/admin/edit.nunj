@@ -1,9 +1,17 @@
 {% extends "views/layout.nunj" %}
 
-{% if item.type == "event" %}
-    {% set title = "Redigera event" %}
+{% if create %}
+    {% if item.content_type == "event" %}
+        {% set title = "Nytt event" %}
+    {% else %}
+        {% set title = "Ny post" %}
+    {% endif %}
 {% else %}
-    {% set title = "Redigera post" %}
+    {% if item.content_type == "event" %}
+        {% set title = "Redigera event" %}
+    {% else %}
+        {% set title = "Redigera post" %}
+    {% endif %}
 {% endif %}
 
 {% block js %}
@@ -48,7 +56,9 @@
 {% block body %}
 
     <form action="/prometheus/edit/{{ item.id }}" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="id" value="{{ item.id }}">
+        {% if not create %}
+            <input type="hidden" name="id" value="{{ item.id }}">
+        {% endif %}
 
         <header>
             <div class="header-inner">
@@ -60,7 +70,11 @@
                         <h2>{{ title }}</h2>
                     </div>
                     <div class="header-right col-md-3">
-                        <span class="visible-lg-inline">Sparad {{ item.updatedAt.format('HH:mm') }}</span>
+                        {% if create %}
+                            <span class="visible-lg-inline">Inte sparad</span>
+                        {% else %}
+                            <span class="visible-lg-inline">Sparad {{ item.updatedAt.format('HH:mm') }}</span>
+                        {% endif %}
                         {% if item.publishDate %}
                             <input class="primary-action" type="submit" name="submit" value="Uppdatera" />
                         {% else %}
@@ -115,6 +129,7 @@
                                     <div class="col-sm-8">
                                         <label class="control-label" for="avatar">Byt ut bilden:</label><br />
                                         <input type="file" name="avatar" id="avatar" class="" placeholder="Innehållsbild" />
+                                        <input type="hidden" name="image" value="{{ item.image }}" />
                                     </div>
                                 </div>
                             {% else %}
@@ -253,6 +268,9 @@
                     {% if item.publishDate == "" %}
                         <strong>Kom ihåg att spara posten som utkast medan du jobbar.</strong>
                         Senaste utkast sparat {{ item.updatedAt.format('HH:mm') }} ({{ item.now.diff(item.updatedAt, 'minutes') }} min sedan)
+                    {% elif create %}
+                        <strong>Kom ihåg att spara posten som utkast medan du jobbar.</strong>
+                        Posten har inte ännu sparats i systemet.
                     {% else %}
                         <strong>Publicerat innehåll uppdateras på siten direkt när du trycker på spara.</strong>
                         Senaste version sparad {{ item.updatedAt.format('HH:mm') }} ({{ item.now.diff(item.updatedAt, 'minutes') }} min sedan)

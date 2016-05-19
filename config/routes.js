@@ -38,6 +38,7 @@ module.exports.routes = {
     '/prometheus/list/:type': 'AdminController.list',
     'get /prometheus/edit/:id': 'AdminController.edit',
     'post /prometheus/edit/:id': 'AdminController.doEdit',
+    'post /prometheus/edit/': 'AdminController.doEdit',
     'post /prometheus/graph/:url': 'AdminController.import',
     '/prometheus/create/:type': 'AdminController.create',
 

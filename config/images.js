@@ -4,7 +4,7 @@
 
 module.exports.images = {
 
-    uploadDir: 'uploads',
+    uploadDir: 'mounted/uploads',
     heroWidth: 850,
     heroHeight: 440,
     thumbnailSize: 150

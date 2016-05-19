@@ -12,7 +12,7 @@
             primary_color: "#8bc34a",
             secondary_color: "white",
             delta_invert: true,
-            login_text: "{{ req.user.first_name }}",
+            login_text: "{{ req.user.user }}",
             login_href: "javascript:void(0);",
             topbar_items: [
                 {
