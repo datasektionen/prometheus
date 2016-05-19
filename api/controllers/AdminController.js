@@ -20,7 +20,7 @@ module.exports = {
     },
 
     home: function (req, res) {
-        return res.view('admin/home');
+        return res.redirect('/prometheus/list/post');
     },
 
     list: function (req, res) {
@@ -67,7 +67,7 @@ module.exports = {
                 item.updatedAt = moment(item.updatedAt);
                 if (item.publishDate)
                     item.publishDate = moment(item.publishDate);
-                
+
                 return res.view('admin/edit', { item: item })
             }
         );
