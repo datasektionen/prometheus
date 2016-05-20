@@ -33,17 +33,40 @@
         <table width="100%" class="table table-striped">
             <thead>
             <tr>
+                <th width="5%"><i class="fa fa-newspaper-o"></i></th>
                 <th width="30%">Titel</th>
-                <th width="25%">Skapad</th>
-                <th width="45%">Uppdaterad</th>
+                <th width="20%">Skapad</th>
+                <th width="20%">Uppdaterad</th>
+                <th width="20%">Publicerad</th>
+                <th width="15%">Författare</th>
             </tr>
             </thead>
             <tbody>
             {% for item in items %}
                 <tr>
-                    <td><a href="/prometheus/edit/{{ item.id }}">{{ item.title_sv }}</a></td>
-                    <td>{{ item.createdAt }}</td>
-                    <td>{{ item.updatedAt }}</td>
+                    <td style="vertical-align: middle;">
+                        {% if item.publishDate %}
+                            <i class="fa fa-check-circle text-success"></i>
+                        {% else %}
+                            <i class="fa fa-circle-o"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/prometheus/edit/{{ item.id }}">
+                            <strong>{{ item.title_sv }}</strong><br />
+                            <small>{{ item.title_en }}</small>
+                        </a>
+                    </td>
+                    <td style="vertical-align: middle;">{{ item.createdAt.format('D MMMM YYYY HH:mm') }}</td>
+                    <td style="vertical-align: middle;">{{ item.updatedAt.format('D MMMM YYYY HH:mm') }}</td>
+                    <td style="vertical-align: middle;">
+                        {% if item.publishDate %}
+                            {{ item.publishDate.format('D MMMM YYYY HH:mm') }}
+                        {% else %}
+                            <em>Utkast</em>
+                        {% endif %}
+                    </td>
+                    <td style="vertical-align:middle;">{{ item.author }}</td>
                 </tr>
             {% else %}
                 <tr>

@@ -11,7 +11,7 @@
             target_id: "methone-container-replace",
             primary_color: "#8bc34a",
             secondary_color: "white",
-            delta_invert: true,
+            bar_color: "#7cb342",
             login_text: "{{ req.user.user }}",
             login_href: "javascript:void(0);",
             topbar_items: [

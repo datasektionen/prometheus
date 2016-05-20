@@ -27,10 +27,19 @@ module.exports = {
         var type = req.params.type;
 
         Content
-            .find({ content_type: type })
+            .find({ where: { content_type: type }, sort: "updatedAt DESC" })
             .exec(function (err, items) {
                 if (err)
                     return res.serverError(err);
+
+                items = items.map(function (item) {
+                    item.createdAt = moment(item.createdAt);
+                    item.updatedAt = moment(item.updatedAt);
+                    if (typeof item.publishDate !== "undefined" && item.publishDate !== "")
+                        item.publishDate = moment(item.publishDate);
+
+                    return item;
+                });
 
                 return res.view('admin/list', { items: items, type: type });
             });
