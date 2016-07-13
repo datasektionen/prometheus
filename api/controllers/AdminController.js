@@ -26,6 +26,8 @@ module.exports = {
     list: function (req, res) {
         var type = req.params.type;
 
+        console.log(req.user)
+
         Content
             .find({ where: { content_type: type }, sort: "updatedAt DESC" })
             .exec(function (err, items) {
@@ -121,11 +123,17 @@ module.exports = {
             if (typeof fields.publish_now !== "undefined") {
                 if (fields.publish_now === "true" && typeof fields.publish !== "undefined")
                     fields.publishDate = moment().format();
+            } else if (typeof fields.delete !== "undefined" && typeof fields.id !== "undefined") {
+                Content.destroy({id: fields.id}).exec(
+                    (err) => res.redirect('/prometheus/list/' + fields.content_type)
+                );
+                return;
             }
 
             // Remove fields that shouldn't be updated from fields object
             delete fields.id;
-            delete fields.submit;
+            delete fields.delete;
+            delete fields.save;
             delete fields.publish;
             delete fields.publish_now;
 

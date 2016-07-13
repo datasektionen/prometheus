@@ -28,7 +28,7 @@ module.exports = {
         var type = req.params.type
         var filters = {
             publishDate: { '<': new Date() },
-            content_type: type == 'all' ? ['event', 'post'] : type
+            content_type: type === 'all' ? ['event', 'post'] : type
         };
 
         Content
@@ -49,7 +49,7 @@ module.exports = {
         Content
             .find({
                 where: { sticky: true },
-                limit: 1,
+                limit: req.query.limit || 1,
                 sort: 'publishDate DESC'
             })
             .exec((err, items) => err ? res.serverError(err) : res.send(items.map(sanitize)));
