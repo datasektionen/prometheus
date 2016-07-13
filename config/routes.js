@@ -42,7 +42,7 @@ module.exports.routes = {
     'post /prometheus/graph/:url': 'AdminController.import',
     '/prometheus/create/:type': 'AdminController.create',
 
-    '/api/list/:language/:type': 'ApiController.list',
+    '/api/list/:type': 'ApiController.list',
     '/api/item/:id': 'ApiController.item',
     '/api/sticky': 'ApiController.sticky'
 };
