@@ -26,8 +26,6 @@ module.exports = {
     list: function (req, res) {
         var type = req.params.type;
 
-        console.log(req.user)
-
         Content
             .find({ where: { content_type: type }, sort: "updatedAt DESC" })
             .exec(function (err, items) {
@@ -52,7 +50,6 @@ module.exports = {
     },
 
     edit: function (req, res) {
-
         Content
             .findOne(req.params.id)
             .exec((err, item) => {
@@ -116,6 +113,14 @@ module.exports = {
             // Metadata variables
             var id = fields.id;
 
+            // Delete item?
+            if (typeof fields.delete !== "undefined" && typeof id !== "undefined") {
+                Content
+                    .destroy({id})
+                    .exec(err => err ? sails.log.error(err) : sails.log.debug('Removed', id));
+                return res.redirect('/prometheus/list/' + fields.content_type);
+            }
+
             if (typeof fileName !== "undefined")
                 fields.image = fileName;
 
@@ -123,11 +128,6 @@ module.exports = {
             if (typeof fields.publish_now !== "undefined") {
                 if (fields.publish_now === "true" && typeof fields.publish !== "undefined")
                     fields.publishDate = moment().format();
-            } else if (typeof fields.delete !== "undefined" && typeof fields.id !== "undefined") {
-                Content.destroy({id: fields.id}).exec(
-                    (err) => res.redirect('/prometheus/list/' + fields.content_type)
-                );
-                return;
             }
 
             // Remove fields that shouldn't be updated from fields object

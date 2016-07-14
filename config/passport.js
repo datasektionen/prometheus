@@ -1,44 +1,7 @@
 var passport = require('passport'),
     CustomStrategy = require('passport-custom').Strategy,
-    https = require('https'),
+    fetch = require('node-fetch'),
     CacheService = require('../api/services/CacheService');
-
-
-function verify(token, callback) {
-    var options = {
-        host: "login2.datasektionen.se",
-        path: "/verify/" + token + ".json?api_key=" + process.env.LOGIN2_KEY,
-        method: "GET"
-    };
-
-    var requestCallback = function(res) {
-        var collectedData = "";
-        res.setEncoding("utf-8");
-
-        res.on("data", function(data) {
-            collectedData += data;
-        });
-
-        res.on("end", function() {
-            if (collectedData) {
-                try {
-                    var user = JSON.parse(collectedData);
-                    callback(user);
-                } catch(e) {
-                    callback(undefined);
-                }
-            } else {
-                callback(undefined);
-            }
-        });
-
-        res.on("error", function() {
-            callback(undefined);
-        });
-    };
-    var request = https.request(options, requestCallback);
-    request.end();
-}
 
 passport.serializeUser(function (user, done) {
     CacheService.addUser(user);
@@ -50,14 +13,28 @@ passport.deserializeUser(function (id, done) {
 });
 
 passport.use('dauth', new CustomStrategy(
+
     function(req, done) {
-        var token = req.params.token;
-        verify(token, function(user) {
-            if(!user) {
-                return done(null, false, { message: 'No user'});
-            } else {
-                return done(null, user);
+        var login = {
+            host: "https://login2.datasektionen.se",
+            path: "/verify/" + req.params.token + ".json?api_key=" + process.env.LOGIN2_KEY
+        }
+
+        fetch(login.host + login.path)
+        .then(res => res.json())
+        .then(user => {
+            var pls = {
+                host: 'http://pls.froyo.datasektionen.se',
+                path: '/api/user/' + user.user + '/prometheus'
             }
-        });
+            fetch(pls.host + pls.path)
+            .then(res => res.json())
+            .then(permissions => {
+                if(permissions === false)
+                    done(null, false, { message: 'No permissions'})
+                else
+                    done(null, Object.assign({}, user, {permissions}))
+            })
+        })
     }
 ));
