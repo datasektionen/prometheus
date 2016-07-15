@@ -11,7 +11,7 @@ var markdown = require('markdown').markdown;
 
 function sanitize(item) {
     return Object.assign({}, item, {
-        content_sv:    markdown.toHTML(item.content_en),
+        content_sv:    markdown.toHTML(item.content_sv),
         content_en:    markdown.toHTML(item.content_en)
     });
 }
