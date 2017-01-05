@@ -23,7 +23,7 @@
 process.chdir(__dirname);
 
 console.log("Using settings:");
-console.log("Connection String: " + process.env.MONGODB_CONNECTIONSTRING);
+console.log("Connection String: " + process.env.MONGO_URL);
 console.log("LOGIN2_KEY: " + process.env.LOGIN2_KEY);
 
 // Ensure a "sails" can be located:
