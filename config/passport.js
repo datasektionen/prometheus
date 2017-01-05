@@ -24,7 +24,7 @@ passport.use('dauth', new CustomStrategy(
         .then(res => res.json())
         .then(user => {
             var pls = {
-                host: 'http://pls.froyo.datasektionen.se',
+                host: 'https://pls.datasektionen.se',
                 path: '/api/user/' + user.user + '/prometheus'
             }
             fetch(pls.host + pls.path)
