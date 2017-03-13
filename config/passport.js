@@ -30,10 +30,10 @@ passport.use('dauth', new CustomStrategy(
             fetch(pls.host + pls.path)
             .then(res => res.json())
             .then(permissions => {
-                if(permissions === false)
-                    done(null, false, { message: 'No permissions'})
-                else
+                if(permissions.length)
                     done(null, Object.assign({}, user, {permissions}))
+                else
+                    done(null, false, { message: 'No permissions'})
             })
         })
     }
