@@ -8,7 +8,7 @@
     <script type="text/javascript">
         window.methone_conf = {
             system_name: "prometheus",
-            color_scheme: "light-green",
+            color_scheme: "light_green",
             login_text: "{{ req.user.user }}",
             login_href: "javascript:void(0);",
             links: [
