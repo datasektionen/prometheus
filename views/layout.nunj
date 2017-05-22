@@ -6,15 +6,12 @@
     <link rel="stylesheet" href="//aurora.datasektionen.se" />
     <link rel="stylesheet" href="/styles/importer.css" />
     <script type="text/javascript">
-        window.tbaas_conf = {
+        window.methone_conf = {
             system_name: "prometheus",
-            target_id: "methone-container-replace",
-            primary_color: "#8bc34a",
-            secondary_color: "white",
-            bar_color: "#7cb342",
+            color_scheme: "light-green",
             login_text: "{{ req.user.user }}",
             login_href: "javascript:void(0);",
-            topbar_items: [
+            links: [
                 {
                     str: "Redigera nyheter",
                     href: "/prometheus/list/post"
@@ -36,7 +33,7 @@
 <div id="application" class="light-green">
     {% block body %}{% endblock %}
 </div>
-<script src="//methone.datasektionen.se"></script>
+<script src="//methone.datasektionen.se/bar.js"></script>
 {% block js %}{% endblock %}
 </body>
 </html>
