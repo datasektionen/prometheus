@@ -30,6 +30,13 @@
         </div>
     </header>
     <div id="content">
+
+        <div class="alert alert-danger">
+            <strong>Viktig information:</strong>
+            Prometheus är placerad i readonly-läge eftersom systemet väldigt snart kommer att stängas ner.
+            Du kan redan nu börja redigera nyheter och event i <a href="https://calypso.datasektionen.se">Calypso</a>
+        </div>
+
         <table width="100%" class="table table-striped">
             <thead>
             <tr>
